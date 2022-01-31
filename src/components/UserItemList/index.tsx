@@ -1,7 +1,17 @@
-import { Box, Button, Checkbox, Icon, Td, Tr, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Icon,
+  Td,
+  Tr,
+  Text,
+  Link,
+  LinkProps,
+} from "@chakra-ui/react";
 import { RiPencilLine } from "react-icons/ri";
 
-interface UserItemListProps {
+interface UserItemListProps extends LinkProps {
   name: string;
   email: string;
   date: string;
@@ -13,6 +23,7 @@ export function UserItemList({
   email,
   date,
   isWide = true,
+  ...rest
 }: UserItemListProps) {
   return (
     <Tr>
@@ -21,7 +32,9 @@ export function UserItemList({
       </Td>
       <Td>
         <Box>
-          <Text fontWeight="bold">{name}</Text>
+          <Link color="pink.500" {...rest}>
+            <Text fontWeight="bold">{name}</Text>
+          </Link>
           <Text fontSize="sm" color="gray.300">
             {email}
           </Text>

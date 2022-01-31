@@ -10,21 +10,37 @@ import {
   Th,
   Tr,
   Checkbox,
-  useBreakpoint,
   useBreakpointValue,
+  Spinner,
+  Text,
 } from "@chakra-ui/react";
+import { GetServerSideProps } from "next";
 import Link from "next/link";
+import { useState } from "react";
 import { RiAddLine } from "react-icons/ri";
 import { Header } from "../../components/Header";
 import Pagination from "../../components/Pagination";
 import Sidebar from "../../components/Sidebar";
 import { UserItemList } from "../../components/UserItemList";
+import { api } from "../../services/api";
+import { getUsers, queryClient, useUsers } from "../../services/hooks/useUsers";
 
 export default function UserList() {
+  const [page, setPage] = useState(1);
+  const { data, isLoading, isError, isFetching } = useUsers(page);
+
+  function handlePrefetchUser(id: string) {
+    queryClient.prefetchQuery(["users", id], async () => {
+      const response = await api.get(`/users/${id}`);
+      return response.data;
+    });
+  }
+
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
   });
+
   return (
     <Box>
       <Header />
@@ -35,6 +51,9 @@ export default function UserList() {
           <Flex mb="8" justify="space-between" align="center">
             <Heading size="lg" fontWeight="normal">
               Usuários
+              {!isLoading && isFetching && (
+                <Spinner size="sm" color="gray.500" ml="4" />
+              )}
             </Heading>
             <Link href="/users/create" passHref>
               <Button
@@ -49,57 +68,51 @@ export default function UserList() {
             </Link>
           </Flex>
 
-          <Table colorScheme="whiteAlpha">
-            <Thead>
-              <Tr>
-                <Th px={["4", "4", "6"]} color="gray.300" width="8">
-                  <Checkbox colorScheme="pink" />
-                </Th>
-                <Th>Usuário</Th>
-                {isWideVersion && <Th>Data de cadastro</Th>}
-                <Th width="8"></Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              <UserItemList
-                name="Luiz Felipe"
-                date="10 de Janeiro, 2022"
-                email="luizfelipe@gmail.com"
+          {isLoading ? (
+            <Flex justify="center">
+              <Spinner />
+            </Flex>
+          ) : isError ? (
+            <Flex justify="center">
+              <Text>Falha ao carregar dados dos usuários</Text>
+            </Flex>
+          ) : (
+            <>
+              <Table colorScheme="whiteAlpha">
+                <Thead>
+                  <Tr>
+                    <Th px={["4", "4", "6"]} color="gray.300" width="8">
+                      <Checkbox colorScheme="pink" />
+                    </Th>
+                    <Th>Usuário</Th>
+                    {isWideVersion && <Th>Data de cadastro</Th>}
+                    <Th width="8"></Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {data.users.map((user) => {
+                    return (
+                      <UserItemList
+                        onMouseEnter={() => handlePrefetchUser(user.id)}
+                        key={user.id}
+                        name={user.name}
+                        date={user.createdAt}
+                        email={user.email}
+                        isWide={isWideVersion}
+                      />
+                    );
+                  })}
+                </Tbody>
+              </Table>
+              <Pagination
                 isWide={isWideVersion}
+                totalCountOfRegisters={data.total}
+                currentPage={page}
+                registerPerPage={10}
+                onPageChange={setPage}
               />
-              <UserItemList
-                name="Luiz Felipe"
-                date="10 de Janeiro, 2022"
-                email="luizfelipe@gmail.com"
-                isWide={isWideVersion}
-              />
-              <UserItemList
-                name="Luiz Felipe"
-                date="10 de Janeiro, 2022"
-                email="luizfelipe@gmail.com"
-                isWide={isWideVersion}
-              />
-              <UserItemList
-                name="Luiz Felipe"
-                date="10 de Janeiro, 2022"
-                email="luizfelipe@gmail.com"
-                isWide={isWideVersion}
-              />
-              <UserItemList
-                name="Luiz Felipe"
-                date="10 de Janeiro, 2022"
-                email="luizfelipe@gmail.com"
-                isWide={isWideVersion}
-              />
-              <UserItemList
-                name="Luiz Felipe"
-                date="10 de Janeiro, 2022"
-                email="luizfelipe@gmail.com"
-                isWide={isWideVersion}
-              />
-            </Tbody>
-          </Table>
-          <Pagination isWide={isWideVersion} />
+            </>
+          )}
         </Box>
       </Flex>
     </Box>

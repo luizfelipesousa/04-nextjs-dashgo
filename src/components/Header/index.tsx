@@ -1,12 +1,21 @@
 import { Flex, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
+import { useContext, useEffect } from "react";
 import { RiMenuLine } from "react-icons/ri";
+import { AuthContext } from "../../contexts/AuthContext";
 import { useSideBarContext } from "../../contexts/SideBarContext";
+import { authApi } from "../../services/api";
 import Logo from "./Logo";
 import Notifications from "./Notifications";
 import Profile from "./Profile";
 import SearchBar from "./SearchBar";
 
 export function Header() {
+  const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    authApi.get("me").then((response) => console.log(response));
+  }, []);
+
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
@@ -38,7 +47,7 @@ export function Header() {
       <Logo />
       {isWideVersion && <SearchBar />}
       <Notifications />
-      <Profile showProfileData={isWideVersion} />
+      <Profile showProfileData={isWideVersion} email={user?.email} />
     </Flex>
   );
 }

@@ -16,9 +16,10 @@ import { Input } from "../../components/Form/Input";
 import { Header } from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { useMutation } from "react-query";
-import { api } from "../../services/api";
+import { api, setupAuthApi } from "../../services/api";
 import { useRouter } from "next/router";
 import { queryClient } from "../../services/hooks/useUsers";
+import withSSRAuth from "../../utils/withSSRAuth";
 type createUserData = {
   name: string;
   email: string;
@@ -142,3 +143,17 @@ export default function CreateUser() {
     </Box>
   );
 }
+
+export const getServerSideProps = withSSRAuth(
+  async (context) => {
+    const clientApi = setupAuthApi(context);
+    clientApi.get("me").then((response) => {
+      console.log(context);
+    });
+
+    return {
+      props: {},
+    };
+  },
+  { permissions: ["users.create"] }
+);

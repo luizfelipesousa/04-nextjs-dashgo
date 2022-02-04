@@ -68,9 +68,9 @@ export function makeServer() {
 
       this.post("/users");
 
-      this.namespace = "";
+      this.passthrough("http://localhost:3333/*");
 
-      this.passthrough();
+      this.namespace = "";
     },
   });
 }

@@ -18,6 +18,16 @@ Os principais pontos e tecnologias abordados neste projeto, foram:
 
 - Criação de gráficos com a API [APEXCHARTS.JS](https://apexcharts.com/)
 
+- Data fetching utilizando React-Query para carregamento de dados e listagem de usuários
+
+- MirageJs para realizar o mock de dados e simular as respostas de uma API considerando um cenário onde o back-end ainda não está finalizado.
+
+- Autenticação e autorização utilizando uma [API local](https://github.com/rocketseat-education/ignite-reactjs-auth-backend)
+
+- Configuração de regras de permissionamento para exibição de informações em tela e acesso a paginas.
+
+- Broadcast channel para deslogar todas as sessões abertas através de várias abas do navegador.
+
 ## Executando
 
 Execute o servidor de desenvolvimento:

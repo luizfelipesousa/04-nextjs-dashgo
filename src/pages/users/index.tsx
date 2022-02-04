@@ -14,16 +14,16 @@ import {
   Spinner,
   Text,
 } from "@chakra-ui/react";
-import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { useState } from "react";
 import { RiAddLine } from "react-icons/ri";
+import Can from "../../components/Can";
 import { Header } from "../../components/Header";
 import Pagination from "../../components/Pagination";
 import Sidebar from "../../components/Sidebar";
 import { UserItemList } from "../../components/UserItemList";
 import { api } from "../../services/api";
-import { getUsers, queryClient, useUsers } from "../../services/hooks/useUsers";
+import { queryClient, useUsers } from "../../services/hooks/useUsers";
 
 export default function UserList() {
   const [page, setPage] = useState(1);
@@ -55,17 +55,19 @@ export default function UserList() {
                 <Spinner size="sm" color="gray.500" ml="4" />
               )}
             </Heading>
-            <Link href="/users/create" passHref>
-              <Button
-                as="a"
-                size="sm"
-                fontSize="sm"
-                colorScheme="pink"
-                leftIcon={<Icon as={RiAddLine} fontSize="20" />}
-              >
-                Criar novo
-              </Button>
-            </Link>
+            <Can permissions={["users.create"]}>
+              <Link href="/users/create" passHref>
+                <Button
+                  as="a"
+                  size="sm"
+                  fontSize="sm"
+                  colorScheme="pink"
+                  leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+                >
+                  Criar novo
+                </Button>
+              </Link>
+            </Can>
           </Flex>
 
           {isLoading ? (
